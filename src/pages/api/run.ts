@@ -18,7 +18,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
         console: "redirect",
         sandbox: {},
         timeout: 1000,
-        wrapper: "commonjs", // ✅ THIS IS CRUCIAL
+        wrapper: "commonjs",
       });
 
       vm.on("console.log", (msg) => logs.push(String(msg)));
