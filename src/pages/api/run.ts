@@ -2,7 +2,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { NodeVM } from "vm2";
 
 type TestCase = {
-  input: unknown;
+  given: unknown;
   expected: unknown;
 };
 
@@ -20,23 +20,22 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
         timeout: 1000,
         wrapper: "commonjs",
       });
-
-      vm.on("console.log", (msg) => logs.push(String(msg)));
-
+      // vm.on("console.log", (msg) => logs.push(String(msg)));
       try {
         const wrappedCode = `
+        const _nonce = ${Math.random()};
         module.exports = (function() {
           ${code}
-          return solve(${JSON.stringify(test.input)});
+          return solve(${JSON.stringify(test.given)});
         })();
       `;
 
         const start = performance.now();
-        const result = vm.run(wrappedCode, "vm.js");
+        const result = vm.run(wrappedCode, "vm.ts");
         const end = performance.now();
 
         return {
-          input: test.input,
+          input: test.given,
           expected: test.expected,
           actual: result,
           pass: JSON.stringify(result) === JSON.stringify(test.expected),
@@ -45,8 +44,9 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
         };
       } catch (err) {
         const message = err instanceof Error ? err.message : "Unknown error";
+        console.error("Error in run.ts tests" + err);
         return {
-          input: test.input,
+          input: test.given,
           expected: test.expected,
           error: message,
           pass: false,
