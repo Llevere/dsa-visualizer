@@ -2,7 +2,7 @@
 
 import CodeBlock from "../components/codeBlock";
 import { useTestsStore } from "@/store/useTestsStore";
-
+import QuestionTitle from "../components/questionTitle"
 const solutions = [
     {
         label: "Replace + Split + Reverse",
@@ -48,5 +48,8 @@ export default function SumOfNumsClient() {
     const testId = "isPalindromeString"
     const tests = getTests(testId);
 
-    return <CodeBlock tests={tests} solutions={solutions} testId={testId} />;
+    return <div>
+        <QuestionTitle>Determine if the string is the same in reverse</QuestionTitle>
+        <CodeBlock tests={tests} solutions={solutions} testId={testId} />
+    </div>;
 }

@@ -2,6 +2,7 @@
 
 import CodeBlock from "../components/codeBlock";
 import { useTestsStore } from "@/store/useTestsStore";
+import QuestionTitle from "../components/questionTitle";
 
 const solutions = [
   {
@@ -28,5 +29,10 @@ export default function SumOfNumsClient() {
   const tests = getTests("sumOfNums");
 
 
-  return <CodeBlock tests={tests} solutions={solutions} testId="sumOfNums" />;
+  return (
+    <div>
+      <QuestionTitle>Return the sum of numbers within an array</QuestionTitle>
+      <CodeBlock tests={tests} solutions={solutions} testId="sumOfNums" />
+    </div>)
+
 }

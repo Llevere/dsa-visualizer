@@ -89,10 +89,7 @@ export default function CodeBlock({ tests, solutions, testId }: Props) {
 
     return (
         <div style={{ padding: 20, fontFamily: 'sans-serif' }}>
-            <div className="flex justify-center">
-                <h1>Question</h1>
-                <p>Get the sum of an array of numbers</p>
-            </div>
+
 
             <h2>Compare Solutions</h2>
             {solutions.map((solution, i) => (
