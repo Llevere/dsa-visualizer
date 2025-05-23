@@ -107,6 +107,28 @@ export default function CodeBlock({ tests, solutions, testId }: Props) {
                                 prev.map((code, idx) => (idx === i ? value ?? "" : code))
                             )
                         }
+                        options={{
+                            readOnly: false,
+                            formatOnType: true,
+                            formatOnPaste: true,
+                            automaticLayout: true,
+                            minimap: { enabled: false },
+                            tabSize: 2,
+                            insertSpaces: true
+                        }}
+                        beforeMount={(monaco) => {
+                            // Enable diagnostics/validation
+                            monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
+                                noSemanticValidation: false,
+                                noSyntaxValidation: false,
+                            });
+
+                            // Enable default formatting for JavaScript
+                            monaco.languages.typescript.javascriptDefaults.setCompilerOptions({
+                                target: monaco.languages.typescript.ScriptTarget.ESNext,
+                                allowNonTsExtensions: true,
+                            });
+                        }}
                     />
                     <button
                         onClick={() => runCode(solutionCodes[i], i)}
