@@ -6,7 +6,7 @@ import axios from "axios";
 import DisplayQuestionDetail from "./displayQuestionDetail";
 
 const MonacoEditor = dynamic(() => import("@monaco-editor/react"), { ssr: false });
-
+type TestCase = { given: unknown; expected: unknown };
 type SolutionObject = {
     "label": string,
     "code": string
@@ -21,8 +21,8 @@ type QuestionResult = {
     timeMs: number,
     error?: string
 }
-type SubmissionSummary = { passed: number; total: number; avgTime: number };
-type TestCase = { given: unknown; expected: unknown };
+type SubmissionSummary = { passed: number; failed: TestCase[], total: number; avgTime: number };
+
 
 type Props = {
     tests: TestCase[];
@@ -73,9 +73,9 @@ export default function CodeBlock({ tests, solutions, testId }: Props) {
                 tests,
                 testId
             });
-            const { passed, total, avgTime } = res.data;
+            const { passed, failed, total, avgTime } = res.data;
             //setResults((prev) => ({ ...prev, [index]: fullResults }));
-            setSummaries((prev) => ({ ...prev, [index]: { passed, total, avgTime } }));
+            setSummaries((prev) => ({ ...prev, [index]: { passed, failed, total, avgTime } }));
 
         } catch (err) {
             const msg = err instanceof Error ? err.message : "Unknown error";
@@ -151,10 +151,28 @@ export default function CodeBlock({ tests, solutions, testId }: Props) {
                             <DisplayQuestionDetail key={j} index={j} data={r} />
                         ))}
                         {summaries[i] && (
-                            <p className="text-sm text-gray-600 mt-2">
-                                ✅ {summaries[i].passed}/{summaries[i].total} passed — Avg time: {summaries[i].avgTime.toFixed(2)} ms
-                            </p>
+                            <div>
+                                <p className="text-sm text-gray-600 mt-2">
+                                    ✅ {summaries[i].passed}/{summaries[i].total} passed — Avg time: {summaries[i].avgTime.toFixed(2)} ms
+                                </p>
+                                {summaries[i]?.failed?.length > 0 && (
+                                    <div className="mt-2">
+                                        <p className="text-red-500 text-sm font-semibold">
+                                            ❌ {summaries[i].failed.length} test{summaries[i].failed.length > 1 ? 's' : ''} failed
+                                        </p>
+                                        <ul className="list-disc pl-5 text-sm text-red-600">
+                                            {summaries[i].failed.map(({ given, expected }, j) => (
+                                                <li key={j}>
+                                                    <strong>Given:</strong> {JSON.stringify(given)} | <strong>Expected:</strong> {JSON.stringify(expected)}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                )}
+
+                            </div>
                         )}
+
 
                     </div>
                 </div>
